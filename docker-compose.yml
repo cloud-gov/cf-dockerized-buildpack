@@ -1,0 +1,7 @@
+version: '2'
+services:
+  app:
+    build:
+      context: .
+      args:
+        PYTHON_VERSION: 3.6.0
