@@ -4,12 +4,24 @@ using a Python buildpack.
 
 The Dockerfile is heavily inspired by [sclevine/cflocal][].
 
-Other references:
+## Quick start
+
+```
+docker-compose build
+docker-compose run app python
+```
+
+## Changing the Python version
+
+To change the version of Python being used, you can change the
+`PYTHON_VERSION` argument in `docker-compose.yml`. It needs
+to be a valid Python version supported by
+[CloudFoundry's Python buildpack][python-buildpack].
+
+## Other references
 
 * [buildpackapplifecycle][] - Source code for the Diego builder and
   launcher used for CloudFoundry deployment.
-
-* [python-buildpack][] - Repository for CloudFoundry's Python buildpack.
 
 * [CloudFoundry custom buildpack documentation][cfdocs]
 
