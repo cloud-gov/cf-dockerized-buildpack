@@ -1,1 +1,2 @@
+# This file just exists so the Diego launcher doesn't get annoyed at us.
 start_command: this_should_never_be_called
