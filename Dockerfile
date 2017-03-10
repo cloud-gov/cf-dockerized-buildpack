@@ -29,25 +29,7 @@ RUN \
   go build -o /tmp/lifecycle/launcher code.cloudfoundry.org/buildpackapplifecycle/launcher && \
   go build -o /tmp/lifecycle/builder code.cloudfoundry.org/buildpackapplifecycle/builder
 
-ENV \
-  CF_INSTANCE_ADDR= \
-  CF_INSTANCE_PORT= \
-  CF_INSTANCE_PORTS=[] \
-  CF_INSTANCE_IP=0.0.0.0 \
-  CF_STACK=cflinuxfs2 \
-  HOME=/home/vcap \
-  MEMORY_LIMIT=512m \
-  VCAP_SERVICES={}
-
-ENV VCAP_APPLICATION '{ \
-    "limits": {"fds": 16384, "mem": 512, "disk": 1024}, \
-    "application_name": "local", "name": "local", "space_name": "local-space", \
-    "application_uris": ["localhost"], "uris": ["localhost"], \
-    "application_id": "01d31c12-d066-495e-aca2-8d3403165360", \
-    "application_version": "2b860df9-a0a1-474c-b02f-5985f53ea0bb", \
-    "version": "2b860df9-a0a1-474c-b02f-5985f53ea0bb", \
-    "space_id": "18300c1c-1aa4-4ae7-81e6-ae59c6cdbaf1" \
-  }'
+ENV CF_STACK=cflinuxfs2
 
 USER vcap
 
