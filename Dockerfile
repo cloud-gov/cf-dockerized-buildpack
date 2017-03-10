@@ -43,6 +43,6 @@ RUN \
   cd /home/vcap && \
   /tmp/lifecycle/builder -buildpackOrder "$(echo "$BUILDPACKS" | tr -s ' ' ,)"
 
-COPY staging_info.yml launcher-launcher.sh sub-launcher.sh /home/vcap/
+COPY staging_info.yml meta-launcher.sh sub-launcher.sh /home/vcap/
 
-ENTRYPOINT ["/home/vcap/launcher-launcher.sh"]
+ENTRYPOINT ["/home/vcap/meta-launcher.sh"]

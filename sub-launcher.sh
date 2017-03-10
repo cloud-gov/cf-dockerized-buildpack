@@ -3,7 +3,7 @@
 set -e
 
 # For details on what these environment variables contain, see
-# launcher-launcher.sh.
+# meta-launcher.sh.
 
 cd $ORIGINAL_CWD
 
