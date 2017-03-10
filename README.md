@@ -1,6 +1,6 @@
 This is an experiment to create a Docker container that approximates
 the runtime environment of a cloud.gov/CloudFoundry droplet
-using a Python buildpack.
+using a Python buildpack on the [cflinuxfs2][] stack.
 
 The Dockerfile is heavily inspired by [sclevine/cflocal][].
 
@@ -25,6 +25,7 @@ to be a valid Python version supported by
 
 * [CloudFoundry custom buildpack documentation][cfdocs]
 
+[cflinuxfs2]: https://github.com/cloudfoundry/stacks/tree/master/cflinuxfs2
 [sclevine/cflocal]: https://github.com/sclevine/cflocal
 [buildpackapplifecycle]: https://github.com/cloudfoundry/buildpackapplifecycle
 [python-buildpack]: https://github.com/cloudfoundry/python-buildpack
