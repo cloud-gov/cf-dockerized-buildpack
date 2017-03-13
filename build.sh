@@ -18,10 +18,6 @@ if [ -z $1 ]; then
     exit;
 fi
 
-if ! [ -x "$(command -v yaml2json)" ]; then
-    go get github.com/bronze1man/yaml2json
-fi
-
 LANGUAGE=$1
 GO_VERSION="1.7"
 DIEGO_VERSION=$(curl -s -L https://api.github.com/repos/cloudfoundry/diego-release/releases/latest | jq -r .tag_name)
