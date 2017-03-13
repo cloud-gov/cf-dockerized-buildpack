@@ -1,48 +1,27 @@
 FROM cloudfoundry/cflinuxfs2
 
-ENV BUILDPACKS \
-  http://github.com/cloudfoundry/python-buildpack
-
+ARG GO_VERSION
+ARG DIEGO_VERSION
+ARG LANGUAGE
 ENV \
-  GO_VERSION=1.7 \
-  DIEGO_VERSION=0.1482.0
+  GO_VERSION=${GO_VERSION:-1.7} \
+  DIEGO_VERSION=${DIEGO_VERSION:-v1.10.0} \
+  LANGUAGE=${LANGUAGE:-python} \
+  BUILDPACK=http://github.com/cloudfoundry/${LANGUAGE}-buildpack
 
-RUN \
-  curl -L "https://storage.googleapis.com/golang/go${GO_VERSION}.linux-amd64.tar.gz" | tar -C /usr/local -xz
+COPY \
+  lifecycle-compile.sh \
+  lifecycle-build.sh \
+  meta-launcher.sh \
+  /tmp/lifecycle/
 
-RUN \
-  mkdir -p /tmp/compile && \
-  git -C /tmp/compile clone --single-branch https://github.com/cloudfoundry/diego-release && \
-  cd /tmp/compile/diego-release && \
-  git checkout "v${DIEGO_VERSION}" && \
-  git submodule update --init --recursive \
-    src/code.cloudfoundry.org/archiver \
-    src/code.cloudfoundry.org/buildpackapplifecycle \
-    src/code.cloudfoundry.org/bytefmt \
-    src/code.cloudfoundry.org/cacheddownloader \
-    src/github.com/cloudfoundry-incubator/candiedyaml \
-    src/github.com/cloudfoundry/systemcerts
+RUN /tmp/lifecycle/lifecycle-compile.sh
 
-RUN \
-  export PATH=/usr/local/go/bin:$PATH && \
-  export GOPATH=/tmp/compile/diego-release && \
-  go build -o /tmp/lifecycle/launcher code.cloudfoundry.org/buildpackapplifecycle/launcher && \
-  go build -o /tmp/lifecycle/builder code.cloudfoundry.org/buildpackapplifecycle/builder
+EXPOSE 8080
 
-ENV CF_STACK=cflinuxfs2
+ONBUILD COPY . /tmp/app/
+ONBUILD RUN chown -R vcap:vcap /tmp/app
+ONBUILD USER vcap
+ONBUILD RUN /tmp/lifecycle/lifecycle-build.sh
 
-USER vcap
-
-ARG PYTHON_VERSION=3.6.0
-
-RUN \
-  mkdir -p /tmp/app && \
-  echo ${PYTHON_VERSION} > /tmp/app/runtime.txt && \
-  touch /tmp/app/requirements.txt && \
-  mkdir -p /home/vcap/tmp && \
-  cd /home/vcap && \
-  /tmp/lifecycle/builder -buildpackOrder "$(echo "$BUILDPACKS" | tr -s ' ' ,)"
-
-COPY staging_info.yml meta-launcher.sh sub-launcher.sh /home/vcap/
-
-ENTRYPOINT ["/home/vcap/meta-launcher.sh"]
+ENTRYPOINT ["/tmp/lifecycle/meta-launcher.sh"]
