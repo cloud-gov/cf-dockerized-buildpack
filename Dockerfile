@@ -20,8 +20,10 @@ RUN /tmp/lifecycle/lifecycle-compile.sh
 EXPOSE 8080
 
 ONBUILD COPY . /tmp/app/
-ONBUILD RUN chown -R vcap:vcap /tmp/app
-ONBUILD USER vcap
+ONBUILD VOLUME /home/vcap/app/.cloudfoundry
+ONBUILD VOLUME /home/vcap/app/.profile.d
+ONBUILD VOLUME /home/vcap/app
 ONBUILD RUN /tmp/lifecycle/lifecycle-build.sh
-
+ONBUILD RUN chown -R vcap:vcap /home/vcap
+ONBUILD USER vcap
 ENTRYPOINT ["/tmp/lifecycle/meta-launcher.sh"]
