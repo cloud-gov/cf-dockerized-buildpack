@@ -1,8 +1,8 @@
 #! /bin/bash
 
-shopt -s nullglob
 set -e
 
+mkdir -p /home/vcap/tmp
 export CF_INSTANCE_INDEX=0
 export CF_INSTANCE_ADDR=0.0.0.0:8080
 export CF_INSTANCE_PORT=8080
@@ -11,7 +11,6 @@ export CF_INSTANCE_GUID=999db41a-508b-46eb-74d8-6f9c06c006da
 export INSTANCE_GUID=999db41a-508b-46eb-74d8-6f9c06c006da
 export INSTANCE_INDEX=0
 export PORT=8080
-export HOME=/home/vcap/app
 export TMPDIR=/home/vcap/tmp
 export VCAP_APPLICATION='{ \
 "limits": {"fds": 16384, "mem": 512, "disk": 1024}, \
@@ -25,9 +24,4 @@ export VCAP_APPLICATION='{ \
 "host": "0.0.0.0", "instance_index": 0, "port": 8080 \
 }'
 
-for script in $HOME/.profile.d/*
-do
-    # shellcheck source=/dev/null
-    . $script
-done
 exec /tmp/lifecycle/launcher $HOME "$(jq -r .start_command /home/vcap/staging_info.yml)" ''

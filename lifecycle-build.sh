@@ -1,10 +1,8 @@
 #!/bin/bash
 
-mkdir -p /home/vcap/tmp
-
-export CF_STACK=cflinuxfs2
-
+rm -f /home/vcap/app/.cloudfoundry/.placeholder
+rm -f /home/vcap/app/.profile.d/.placeholder
 cd /home/vcap || exit
 /tmp/lifecycle/builder -skipDetect -buildpackOrder "${BUILDPACK}"
-tar -C /home/vcap -zxf /tmp/droplet
-chown -R vcap:vcap /home/vcap
+tar -C /home/vcap -zvxf /tmp/droplet
+ls -alR /home/vcap/app

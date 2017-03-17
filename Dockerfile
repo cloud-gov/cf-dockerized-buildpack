@@ -7,7 +7,9 @@ ENV \
   GO_VERSION=${GO_VERSION:-1.7} \
   DIEGO_VERSION=${DIEGO_VERSION:-v1.10.0} \
   LANGUAGE=${LANGUAGE:-python} \
-  BUILDPACK=http://github.com/cloudfoundry/${LANGUAGE}-buildpack
+  BUILDPACK=http://github.com/cloudfoundry/${LANGUAGE}-buildpack \
+  CF_STACK=cflinuxfs2 \
+  HOME=/home/vcap
 
 COPY \
   lifecycle-compile.sh \
@@ -15,15 +17,23 @@ COPY \
   meta-launcher.sh \
   /tmp/lifecycle/
 
+RUN \
+  mkdir -p /home/vcap/app/.cloudfoundry && \
+  mkdir -p /home/vcap/app/.profile.d && \
+  touch /home/vcap/app/.cloudfoundry/.placeholder && \
+  touch /home/vcap/app/.profile.d/.placeholder && \
+  chown -R vcap:vcap /home/vcap
+
+VOLUME \
+    /home/vcap/app/.cloudfoundry \
+    /home/vcap/app/.profile.d
+
 RUN /tmp/lifecycle/lifecycle-compile.sh
 
 EXPOSE 8080
 
 ONBUILD COPY . /tmp/app/
-ONBUILD VOLUME /home/vcap/app/.cloudfoundry
-ONBUILD VOLUME /home/vcap/app/.profile.d
-ONBUILD VOLUME /home/vcap/app
-ONBUILD RUN /tmp/lifecycle/lifecycle-build.sh
-ONBUILD RUN chown -R vcap:vcap /home/vcap
+ONBUILD RUN chown -R vcap:vcap /tmp/app
 ONBUILD USER vcap
+ONBUILD RUN /tmp/lifecycle/lifecycle-build.sh
 ENTRYPOINT ["/tmp/lifecycle/meta-launcher.sh"]
