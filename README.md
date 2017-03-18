@@ -24,8 +24,9 @@ that looks like:
 FROM cloud-gov/python
 ```
 
-You can then add a `docker-compose.yml` to setup ports to be exposed to your
-local system:
+You can then add a `docker-compose.yml`. This file exposes the proper port
+to your local system, and also maps your application to the proper location
+inside the container for easy changes.
 
 ```yaml
 version: '2'
@@ -33,6 +34,8 @@ services:
   app:
     ports:
       - 8080:8080
+    volumes:
+      - .:/home/vcap/app
     build:
       context: .
 ```
@@ -45,6 +48,16 @@ docker-compose up --build
 ```
 
 As your container builds, it goes through the [buildpackapplifecycle][] to properly build and launch your application.
+
+#### Deploying changes
+When you make changes to your app, you simply stop the container, and bring it back up again.
+
+```shell
+docker-compose down
+docker-compose up
+```
+
+If you make changes to your required dependencies (through requirements.txt, package.json, Gemfile, etc) then you will need to force another build of the container with `docker-compose up --build`.
 
 ## Other references
 

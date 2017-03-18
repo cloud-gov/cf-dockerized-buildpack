@@ -1,6 +1,12 @@
 #!/bin/sh
 
 mkdir -p /tmp/compile
+mkdir -p /home/vcap/tmp
+mkdir -p /home/vcap/app/.cloudfoundry
+mkdir -p /home/vcap/app/.profile.d
+touch /home/vcap/app/.cloudfoundry/.placeholder
+touch /home/vcap/app/.profile.d/.placeholder
+chown -R vcap:vcap /home/vcap
 
 curl -# -L "https://storage.googleapis.com/golang/go${GO_VERSION}.linux-amd64.tar.gz" | tar -C /tmp/compile -xz
 git -C /tmp/compile clone --single-branch https://github.com/cloudfoundry/diego-release
