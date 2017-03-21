@@ -18,15 +18,13 @@ This will build a base image that can be used by your own application
 to replicate the build lifecycle when pushing an application.
 
 ### Using in your application
-Once you have
-built this image, you can then add a Dockerfile to your own application
-that looks like:
+To use the image in your application, you will create a `Dockerfile`. This `Dockerfile` is used to build your final container image with the correct language, or buildpack, that your application is using.  So for a python project, your `Dockerfile` will look like:
 
 ```Dockerfile
 FROM cloud-gov/python
 ```
 
-You can then add a `docker-compose.yml`. This file exposes the proper port
+You then will add a `docker-compose.yml`. This file exposes the proper port
 to your local system, and also maps your application to the proper location
 inside the container for easy changes.
 
