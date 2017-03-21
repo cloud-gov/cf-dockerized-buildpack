@@ -1,4 +1,6 @@
-#!/bin/sh
+#!/usr/bin/env bash
+
+set -e
 
 mkdir -p /tmp/compile
 mkdir -p /home/vcap/tmp

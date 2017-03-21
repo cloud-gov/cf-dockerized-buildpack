@@ -1,4 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+set -e
 
 rm -f /home/vcap/app/.cloudfoundry/.placeholder
 rm -f /home/vcap/app/.profile.d/.placeholder
