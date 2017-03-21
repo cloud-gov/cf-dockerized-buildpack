@@ -5,7 +5,9 @@ the runtime environment of a cloud.gov/CloudFoundry droplet on the
 The Dockerfile is heavily inspired by [sclevine/cflocal][].
 
 ## Quick start
-To build an image for a particular buildpack, you provide  the language
+Make sure you have [jq][] installed to run the build script.
+
+To build an image for a particular buildpack, you provide the language
 as a argument to the build script. For example, to build an image for `python`:
 
 ```shell
@@ -65,6 +67,7 @@ If you make changes to your required dependencies (through requirements.txt, pac
 
 * [CloudFoundry system buildpacks][buildpacks]
 
+[jq]: https://stedolan.github.io/jq/
 [cflinuxfs2]: https://github.com/cloudfoundry/stacks/tree/master/cflinuxfs2
 [sclevine/cflocal]: https://github.com/sclevine/cflocal
 [buildpackapplifecycle]: https://github.com/cloudfoundry/buildpackapplifecycle
