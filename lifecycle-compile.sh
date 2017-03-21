@@ -10,7 +10,7 @@ touch /home/vcap/app/.cloudfoundry/.placeholder
 touch /home/vcap/app/.profile.d/.placeholder
 chown -R vcap:vcap /home/vcap
 
-curl -# -L "https://storage.googleapis.com/golang/go${GO_VERSION}.linux-amd64.tar.gz" | tar -C /tmp/compile -xz
+curl --progress-bar -L "https://storage.googleapis.com/golang/go${GO_VERSION}.linux-amd64.tar.gz" | tar -C /tmp/compile -xz
 git -C /tmp/compile clone --single-branch https://github.com/cloudfoundry/diego-release
 cd /tmp/compile/diego-release || exit
 git checkout "${DIEGO_VERSION}"
