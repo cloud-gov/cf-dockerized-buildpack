@@ -5,13 +5,14 @@ set -e
 case "$1" in
     binary|go|java|nodejs|dotnet-core|php|python|ruby|staticfile)
         LANGUAGE=$1
-        GO_VERSION="1.7"
+        GO_VERSION="${GO_VERSION:-1.7}"
         DIEGO_VERSION=$(curl -s -L http://bosh.io/api/v1/releases/github.com/cloudfoundry/diego-release -H "Content-type: application/json" -H "Accept: application/json" | jq -r '.[0] | .version')
         BP_VERSION=$(curl -s -L http://bosh.io/api/v1/releases/github.com/cloudfoundry/python-buildpack-release -H "Content-type: application/json" -H "Accept: application/json" | jq -r '.[0] | .version')
 
         docker build . \
-            --tag "cf-${LANGUAGE}-buildpack:${BP_VERSION}" \
-            --tag "cf-${LANGUAGE}-buildpack:latest" \
+            --no-cache \
+            --tag "${LANGUAGE}-buildpack:${BP_VERSION}" \
+            --tag "${LANGUAGE}-buildpack:latest" \
             --build-arg GO_VERSION=${GO_VERSION} \
             --build-arg DIEGO_VERSION="v${DIEGO_VERSION}" \
             --build-arg LANGUAGE="${LANGUAGE}"

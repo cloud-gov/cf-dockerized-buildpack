@@ -21,8 +21,16 @@ resources:
   source:
     repository: cloudfoundry/python-buildpack-release
 
+- name: registry-auth-s3
+  type: s3
+  source:
+    server_side_encryption: AES256
+    region_name: {{s3_region}}
+    bucket: {{s3_bucket}}
+    versioned_file: jobstorage/registry-service-auth
+
 jobs:
-- name: create-private-registry
+- name: deploy-docker-registry
   serial: true
   plan:
   - get: cf-buildpack-image-src
@@ -37,16 +45,21 @@ jobs:
       CF_ORG: {{cf_org}}
       CF_SPACE: {{cf_space}}
       APP_NAME: {{registry_app_name}}
+  - put: registry-auth-s3
+    params:
+      file: build/registry-service-auth
 
 - name: update-python-image
-  serial_groups: [publish]
+  serial: true
   plan:
   - get: cf-buildpack-image-src
     trigger: true
+    passed: [deploy-docker-registry]
   - get: python-buildpack-release
     trigger: true
   - get: cflinuxfs2-release
     trigger: true
+  - get: registry-auth-s3
   - task: do-build-args
     file: cf-buildpack-image-src/ci/do-build-args.yml
     params:
