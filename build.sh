@@ -10,8 +10,8 @@ case "$1" in
         BP_VERSION=$(curl -s -L http://bosh.io/api/v1/releases/github.com/cloudfoundry/python-buildpack-release -H "Content-type: application/json" -H "Accept: application/json" | jq -r '.[0] | .version')
 
         docker build . \
-            --tag "18fgsa/cf-${LANGUAGE}:${BP_VERSION}" \
-            --tag "18fgsa/cf-${LANGUAGE}:latest" \
+            --tag "cf-${LANGUAGE}-buildpack:${BP_VERSION}" \
+            --tag "cf-${LANGUAGE}-buildpack:latest" \
             --build-arg GO_VERSION=${GO_VERSION} \
             --build-arg DIEGO_VERSION="v${DIEGO_VERSION}" \
             --build-arg LANGUAGE="${LANGUAGE}"

@@ -21,7 +21,7 @@ to replicate the build lifecycle when pushing an application.
 To use the image in your application, you will create a `Dockerfile`. This `Dockerfile` is used to build your final container image with the correct language, or buildpack, that your application is using.  So for a python project, your `Dockerfile` will look like:
 
 ```Dockerfile
-FROM cloud-gov/python
+FROM cf-python-buildpack
 ```
 
 You then will add a `docker-compose.yml`. This file exposes the proper port
@@ -59,6 +59,24 @@ docker-compose up
 
 If you make changes to your required dependencies (through requirements.txt, package.json, Gemfile, etc) then you will need to force another build of the container with `docker-compose up --build`.
 
+## Using the automated pipeline
+**NOTE** This requires using [concourse.ci][] and [cloud.gov][]
+
+* Copy `credentials.example.yml` to `credentials.yml` and start filling in with the appropriate information.
+
+* Create a deployer user in the org and space you want the registry to live:
+```shell
+cf create-service cloud-gov-service-account space-deployer registry-deployer
+cf service registry-deployer
+```
+
+* Visit the given Dashboard URL to get the account credentials. Update the `credentials.yml`
+
+* Fly the pipeline
+```shell
+fly -t <TARGET> set-pipeline -p dockerized-buildpacks -c pipeline.yml -l credentials.yml
+```
+
 ## Other references
 
 * [CloudFoundry custom buildpack documentation][cfdocs]
@@ -71,3 +89,5 @@ If you make changes to your required dependencies (through requirements.txt, pac
 [buildpackapplifecycle]: https://github.com/cloudfoundry/buildpackapplifecycle
 [cfdocs]: https://docs.cloudfoundry.org/buildpacks/custom.html
 [buildpacks]: https://docs.cloudfoundry.org/buildpacks/#system-buildpacks
+[concourse.ci]: https://concourse.ci
+[cloud.gov]: https://cloud.gov

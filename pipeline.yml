@@ -6,100 +6,48 @@ resources:
     uri: https://github.com/18F/cf-dockerized-buildpack.git
     branch: pipeline
 
-# - name: docker-image-repo-binary
-#   type: docker-image
-#   source:
-#     email: {{docker-email}}
-#     username: {{docker-username}}
-#     password: {{docker-password}}
-#     repository: 18fgsa/cf-binary
-
-# - name: docker-image-repo-go
-#   type: docker-image
-#   source:
-#     email: {{docker-email}}
-#     username: {{docker-username}}
-#     password: {{docker-password}}
-#     repository: 18fgsa/cf-go
-
-# - name: docker-image-repo-java
-#   type: docker-image
-#   source:
-#     email: {{docker-email}}
-#     username: {{docker-username}}
-#     password: {{docker-password}}
-#     repository: 18fgsa/cf-java
-
-# - name: docker-image-repo-nodejs
-#   type: docker-image
-#   source:
-#     email: {{docker-email}}
-#     username: {{docker-username}}
-#     password: {{docker-password}}
-#     repository: 18fgsa/cf-nodejs
-
-# - name: docker-image-repo-dotnet-core
-#   type: docker-image
-#   source:
-#     email: {{docker-email}}
-#     username: {{docker-username}}
-#     password: {{docker-password}}
-#     repository: 18fgsa/cf-dotnet-core
-
-# - name: docker-image-repo-php
-#   type: docker-image
-#   source:
-#     email: {{docker-email}}
-#     username: {{docker-username}}
-#     password: {{docker-password}}
-#     repository: 18fgsa/cf-php
-
-# - name: docker-image-repo-python
-#   type: docker-image
-#   source:
-#     email: {{docker-email}}
-#     username: {{docker-username}}
-#     password: {{docker-password}}
-#     repository: 18fgsa/cf-python
-- name: python-buildpack-src
-  type: github-release
+- name: cflinuxfs2-release
+  type: bosh-io-release
   source:
-    user: cloudfoundry
-    repository: python-buildpack
+    repository: cloudfoundry/cflinuxfs2-rootfs-release
 
-# - name: docker-image-repo-ruby
-#   type: docker-image
-#   source:
-#     email: {{docker-email}}
-#     username: {{docker-username}}
-#     password: {{docker-password}}
-#     repository: 18fgsa/cf-ruby
+- name: registry-image
+  type: docker-image
+  source:
+    repository: registry
 
-# - name: docker-image-repo-staticfile
-#   type: docker-image
-#   source:
-#     email: {{docker-email}}
-#     username: {{docker-username}}
-#     password: {{docker-password}}
-#     repository: 18fgsa/cf-staticfile
+- name: python-buildpack-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/python-buildpack-release
 
 jobs:
+- name: create-private-registry
+  serial: true
+  plan:
+  - get: cf-buildpack-image-src
+  - get: registry-image
+    trigger: true
+  - task: deploy-registry
+    file: cf-buildpack-image-src/ci/deploy-registry.yml
+    params:
+      CF_API: {{cf_api}}
+      CF_USER: {{cf_username}}
+      CF_PASS: {{cf_password}}
+      CF_ORG: {{cf_org}}
+      CF_SPACE: {{cf_space}}
+      APP_NAME: {{registry_app_name}}
+
 - name: update-python-image
+  serial_groups: [publish]
   plan:
   - get: cf-buildpack-image-src
     trigger: true
-  - get: python-buildpack-src
+  - get: python-buildpack-release
+    trigger: true
+  - get: cflinuxfs2-release
     trigger: true
   - task: do-build-args
     file: cf-buildpack-image-src/ci/do-build-args.yml
     params:
-      GO_VERSION: 1.7
       LANGUAGE: python
-  # - put: docker-image-repo-python
-  #   params:
-  #     build: cf-buildpack-image-src
-  #     tag_as_latest: true
-  #     tag: build/tag
-  #     build_args_file: build/args.json
-
-

@@ -12,7 +12,7 @@ cat <<EOF > build/args.json
 {
   "DIEGO_VERSION": "v${DIEGO_VERSION}",
   "LANGUAGE": "${LANGUAGE}",
-  "GO_VERSION": "${GO_VERSION}"
+  "GO_VERSION": "${GO_VERSION:-1.7}"
 }
 EOF
 
