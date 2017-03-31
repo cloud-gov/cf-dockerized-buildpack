@@ -3,8 +3,10 @@
 set -e
 set -u
 
-DIEGO_VERSION=$(curl -s -L http://bosh.io/api/v1/releases/github.com/cloudfoundry/diego-release -H "Content-type: application/json" -H "Accept: application/json" | jq -r '.[0] | .version')
-BP_VERSION=$(curl -s -L http://bosh.io/api/v1/releases/github.com/cloudfoundry/python-buildpack-release -H "Content-type: application/json" -H "Accept: application/json" | jq -r '.[0] | .version')
+BASE_URL="http://bosh.io/api/v1/releases/github.com/cloudfoundry"
+HEADERS='-H "Content-type: application/json" -H "Accept: application/json"'
+DIEGO_VERSION=$(curl -s -L "${BASE_URL}/diego-release" ${HEADERS} | jq -r '.[0] | .version')
+BP_VERSION=$(curl -s -L "${BASE_URL}/${LANGUAGE}-buildpack-release" ${HEADERS} | jq -r '.[0] | .version')
 
 cat <<EOF > build/args.json
 {

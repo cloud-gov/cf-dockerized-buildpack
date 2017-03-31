@@ -7,7 +7,6 @@ image_resource:
 
 inputs:
 - name: cf-buildpack-image-src
-- name: diego-release-src
 outputs:
 - name: build
 run:
