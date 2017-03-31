@@ -1,0 +1,112 @@
+---
+resources:
+- name: cf-buildpack-image-src
+  type: git
+  source:
+    uri: https://github.com/18F/cf-dockerized-buildpack.git
+    branch: master
+
+- name: diego-release-src
+  type: github-release
+  source:
+    user: cloudfoundry
+    repository: diego-release
+
+# - name: docker-image-repo-binary
+#   type: docker-image
+#   source:
+#     email: {{docker-email}}
+#     username: {{docker-username}}
+#     password: {{docker-password}}
+#     repository: 18fgsa/cf-binary
+
+# - name: docker-image-repo-go
+#   type: docker-image
+#   source:
+#     email: {{docker-email}}
+#     username: {{docker-username}}
+#     password: {{docker-password}}
+#     repository: 18fgsa/cf-go
+
+# - name: docker-image-repo-java
+#   type: docker-image
+#   source:
+#     email: {{docker-email}}
+#     username: {{docker-username}}
+#     password: {{docker-password}}
+#     repository: 18fgsa/cf-java
+
+# - name: docker-image-repo-nodejs
+#   type: docker-image
+#   source:
+#     email: {{docker-email}}
+#     username: {{docker-username}}
+#     password: {{docker-password}}
+#     repository: 18fgsa/cf-nodejs
+
+# - name: docker-image-repo-dotnet-core
+#   type: docker-image
+#   source:
+#     email: {{docker-email}}
+#     username: {{docker-username}}
+#     password: {{docker-password}}
+#     repository: 18fgsa/cf-dotnet-core
+
+# - name: docker-image-repo-php
+#   type: docker-image
+#   source:
+#     email: {{docker-email}}
+#     username: {{docker-username}}
+#     password: {{docker-password}}
+#     repository: 18fgsa/cf-php
+
+- name: docker-image-repo-python
+  type: docker-image
+  source:
+    email: {{docker-email}}
+    username: {{docker-username}}
+    password: {{docker-password}}
+    repository: 18fgsa/cf-python
+- name: python-buildpack-src
+  type: github-release
+  source:
+    user: cloudfoundry
+    repository: python-buildpack
+
+# - name: docker-image-repo-ruby
+#   type: docker-image
+#   source:
+#     email: {{docker-email}}
+#     username: {{docker-username}}
+#     password: {{docker-password}}
+#     repository: 18fgsa/cf-ruby
+
+# - name: docker-image-repo-staticfile
+#   type: docker-image
+#   source:
+#     email: {{docker-email}}
+#     username: {{docker-username}}
+#     password: {{docker-password}}
+#     repository: 18fgsa/cf-staticfile
+
+jobs:
+- name: update-python-image
+  plan:
+  - get: cf-buildpack-image-src
+    trigger: true
+  - get: python-buildpack-src
+    trigger: true
+  - get: diego-release-src
+  - task: do-build-args
+    file: ci/do-build-args.yml
+    params:
+      GO_VERSION: 1.7
+      LANGUAGE: python
+  # - put: docker-image-repo-python
+  #   params:
+  #     build: cf-buildpack-image-src
+  #     tag_as_latest: true
+  #     tag: python-buildpack-src/version
+  #     build_args_file: build/args.json
+
+

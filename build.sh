@@ -10,8 +10,8 @@ case "$1" in
         BP_VERSION=$(curl -s -L "https://api.github.com/repos/cloudfoundry/${LANGUAGE}-buildpack/releases/latest" | jq -r .tag_name)
 
         docker build . \
-            --tag "cloud-gov/${LANGUAGE}:${BP_VERSION}" \
-            --tag "cloud-gov/${LANGUAGE}:latest" \
+            --tag "18fgsa/cf-${LANGUAGE}:${BP_VERSION}" \
+            --tag "18fgsa/cf-${LANGUAGE}:latest" \
             --build-arg GO_VERSION=${GO_VERSION} \
             --build-arg DIEGO_VERSION="${DIEGO_VERSION}" \
             --build-arg LANGUAGE="${LANGUAGE}"

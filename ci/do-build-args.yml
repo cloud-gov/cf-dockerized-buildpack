@@ -1,0 +1,18 @@
+---
+platform: linux
+image_resource:
+  type: docker-image
+  source:
+    repository: gliderlabs/alpine
+
+inputs:
+- name: cf-buildpack-image-src
+- name: diego-release-src
+outputs:
+- name: build
+run:
+  path: cf-buildpack-image-src/do-build-args.sh
+
+params:
+  GO_VERSION:
+  LANGUAGE:
