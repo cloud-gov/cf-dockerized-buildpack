@@ -6,14 +6,14 @@ case "$1" in
     binary|go|java|nodejs|dotnet-core|php|python|ruby|staticfile)
         LANGUAGE=$1
         GO_VERSION="1.7"
-        DIEGO_VERSION=$(curl -s -L https://api.github.com/repos/cloudfoundry/diego-release/releases/latest | jq -r .tag_name)
-        BP_VERSION=$(curl -s -L "https://api.github.com/repos/cloudfoundry/${LANGUAGE}-buildpack/releases/latest" | jq -r .tag_name)
+        DIEGO_VERSION=$(curl -s -L http://bosh.io/api/v1/releases/github.com/cloudfoundry/diego-release -H "Content-type: application/json" -H "Accept: application/json" | jq -r '.[0] | .version')
+        BP_VERSION=$(curl -s -L http://bosh.io/api/v1/releases/github.com/cloudfoundry/python-buildpack-release -H "Content-type: application/json" -H "Accept: application/json" | jq -r '.[0] | .version')
 
         docker build . \
             --tag "18fgsa/cf-${LANGUAGE}:${BP_VERSION}" \
             --tag "18fgsa/cf-${LANGUAGE}:latest" \
             --build-arg GO_VERSION=${GO_VERSION} \
-            --build-arg DIEGO_VERSION="${DIEGO_VERSION}" \
+            --build-arg DIEGO_VERSION="v${DIEGO_VERSION}" \
             --build-arg LANGUAGE="${LANGUAGE}"
         echo "Built image using buildpack ${LANGUAGE}:${BP_VERSION}"
         ;;
