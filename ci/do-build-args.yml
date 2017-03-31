@@ -3,7 +3,7 @@ platform: linux
 image_resource:
   type: docker-image
   source:
-    repository: gliderlabs/alpine
+    repository: governmentpaas/cf-cli
 
 inputs:
 - name: cf-buildpack-image-src
@@ -11,7 +11,7 @@ inputs:
 outputs:
 - name: build
 run:
-  path: cf-buildpack-image-src/do-build-args.sh
+  path: cf-buildpack-image-src/ci/do-build-args.sh
 
 params:
   GO_VERSION:

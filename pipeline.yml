@@ -4,13 +4,7 @@ resources:
   type: git
   source:
     uri: https://github.com/18F/cf-dockerized-buildpack.git
-    branch: master
-
-- name: diego-release-src
-  type: github-release
-  source:
-    user: cloudfoundry
-    repository: diego-release
+    branch: pipeline
 
 # - name: docker-image-repo-binary
 #   type: docker-image
@@ -60,13 +54,13 @@ resources:
 #     password: {{docker-password}}
 #     repository: 18fgsa/cf-php
 
-- name: docker-image-repo-python
-  type: docker-image
-  source:
-    email: {{docker-email}}
-    username: {{docker-username}}
-    password: {{docker-password}}
-    repository: 18fgsa/cf-python
+# - name: docker-image-repo-python
+#   type: docker-image
+#   source:
+#     email: {{docker-email}}
+#     username: {{docker-username}}
+#     password: {{docker-password}}
+#     repository: 18fgsa/cf-python
 - name: python-buildpack-src
   type: github-release
   source:
@@ -96,9 +90,8 @@ jobs:
     trigger: true
   - get: python-buildpack-src
     trigger: true
-  - get: diego-release-src
   - task: do-build-args
-    file: ci/do-build-args.yml
+    file: cf-buildpack-image-src/ci/do-build-args.yml
     params:
       GO_VERSION: 1.7
       LANGUAGE: python
@@ -106,7 +99,7 @@ jobs:
   #   params:
   #     build: cf-buildpack-image-src
   #     tag_as_latest: true
-  #     tag: python-buildpack-src/version
+  #     tag: build/tag
   #     build_args_file: build/args.json
 
 
