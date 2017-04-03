@@ -5,6 +5,8 @@ set -u
 
 SCRIPTPATH=$( cd $(dirname $0) ; pwd -P )
 
+/usr/local/bin/wrapdocker
+
 # get jq
 apt-get update -qq && apt-get install -qqy jq
 
