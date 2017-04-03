@@ -4,14 +4,18 @@ set -e
 set -u
 
 SCRIPTPATH=$( cd $(dirname $0) ; pwd -P )
-BP_VERSION=$(curl -s -L http://bosh.io/api/v1/releases/github.com/cloudfoundry/python-buildpack-release -H "Content-type: application/json" -H "Accept: application/json" | jq -r '.[0] | .version')
+
+# get jq
+apk add --no-cache jq
+
+BP_VERSION=$(curl -s -L http://bosh.io/api/v1/releases/github.com/cloudfoundry/${LANGUAGE}-buildpack-release -H "Content-type: application/json" -H "Accept: application/json" | jq -r '.[0] | .version')
 
 "${SCRIPTPATH}/../build.sh" "${LANGUAGE}"
 
 docker run -d \
   --publish 5000:5000 \
   --restart always \
-  --env-file foobar \
+  --env-file registry-auth-s3/jobstorage/registry-service-auth \
   --name registry registry:2
 
 docker tag "${LANGUAGE}-buildpack:${BP_VERSION}" localhost:5000/"${LANGUAGE}-buildpack:${BP_VERSION}"
