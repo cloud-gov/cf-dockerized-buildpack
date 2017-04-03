@@ -5,6 +5,7 @@ set -u
 
 SCRIPTPATH=$( cd $(dirname $0) ; pwd -P )
 
+PORT=2375
 /usr/local/bin/wrapdocker
 
 # get jq
