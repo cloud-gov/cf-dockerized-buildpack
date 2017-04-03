@@ -3,10 +3,14 @@
 set -e
 set -u
 
-SCRIPTPATH=$( cd $(dirname $0) ; pwd -P )
+source /opt/resource/common.sh
 
-# get jq
-apk add --no-cache jq
+# for jq
+export PATH=/usr/local/bin:$PATH
+
+start_docker
+
+SCRIPTPATH=$( cd $(dirname $0) ; pwd -P )
 
 BP_VERSION=$(curl -s -L http://bosh.io/api/v1/releases/github.com/cloudfoundry/${LANGUAGE}-buildpack-release -H "Content-type: application/json" -H "Accept: application/json" | jq -r '.[0] | .version')
 

@@ -3,10 +3,11 @@ platform: linux
 image_resource:
   type: docker-image
   source:
-    repository: docker
+    repository: concourse/docker-image-resource
 
 inputs:
 - name: cf-buildpack-image-src
+- name: registry-auth-s3
 run:
   path: cf-buildpack-image-src/ci/do-build-args.sh
 
