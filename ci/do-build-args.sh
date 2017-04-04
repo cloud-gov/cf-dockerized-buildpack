@@ -34,10 +34,10 @@ docker run -d \
   --env REGISTRY_STORAGE_S3_REGION="${REGISTRY_STORAGE_S3_REGION}" \
   --name registry registry:2
 
-docker tag "cloud-gov/${LANGUAGE}-buildpack:${BP_VERSION}" localhost:5000/cloud-gov/"${LANGUAGE}-buildpack:${BP_VERSION}"
-docker tag "cloud-gov/${LANGUAGE}-buildpack:latest" localhost:5000/cloud-gov/"${LANGUAGE}-buildpack:latest"
+docker tag "${LANGUAGE}-buildpack:${BP_VERSION}" localhost:5000/"${LANGUAGE}-buildpack:${BP_VERSION}"
+docker tag "${LANGUAGE}-buildpack:latest" localhost:5000/"${LANGUAGE}-buildpack:latest"
 
-docker push localhost:5000/cloud-gov/"${LANGUAGE}-buildpack"
+docker push localhost:5000/"${LANGUAGE}-buildpack"
 
 docker stop $(docker ps -q)
 

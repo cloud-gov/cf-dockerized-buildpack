@@ -11,8 +11,8 @@ case "$1" in
 
         docker build . \
             --no-cache \
-            --tag "cloud-gov/${LANGUAGE}-buildpack:${BP_VERSION}" \
-            --tag "cloud-gov/${LANGUAGE}-buildpack:latest" \
+            --tag "${LANGUAGE}-buildpack:${BP_VERSION}" \
+            --tag "${LANGUAGE}-buildpack:latest" \
             --build-arg GO_VERSION=${GO_VERSION} \
             --build-arg DIEGO_VERSION="v${DIEGO_VERSION}" \
             --build-arg LANGUAGE="${LANGUAGE}"
