@@ -38,3 +38,7 @@ docker tag "${LANGUAGE}-buildpack:${BP_VERSION}" localhost:5000/"${LANGUAGE}-bui
 docker tag "${LANGUAGE}-buildpack:latest" localhost:5000/"${LANGUAGE}-buildpack:latest"
 
 docker push localhost:5000/"${LANGUAGE}-buildpack"
+
+docker stop $(docker ps -q)
+
+kill -9 $(cat /var/run/docker.pid)
