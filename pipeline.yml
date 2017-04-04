@@ -5,62 +5,223 @@ resources:
   source:
     uri: https://github.com/18F/cf-dockerized-buildpack.git
     branch: pipeline
-
 - name: cflinuxfs2-release
   type: bosh-io-release
   source:
     repository: cloudfoundry/cflinuxfs2-rootfs-release
-
 - name: registry-image
   type: docker-image
   source:
     repository: registry
-
+- name: binary-buildpack-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/binary-buildpack-release
+- name: go-buildpack-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/go-buildpack-release
+- name: java-buildpack-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/java-buildpack-release
+- name: nodejs-buildpack-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/nodejs-buildpack-release
+- name: dotnet-core-buildpack-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/dotnet-core-buildpack-release
+- name: php-buildpack-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/php-buildpack-release
 - name: python-buildpack-release
   type: bosh-io-release
   source:
     repository: cloudfoundry/python-buildpack-release
-
-- name: registry-auth-s3
-  type: s3
+- name: ruby-buildpack-release
+  type: bosh-io-release
   source:
-    server_side_encryption: AES256
-    region_name: {{s3_region}}
-    bucket: {{s3_bucket}}
-    versioned_file: jobstorage/registry-service-auth
+    repository: cloudfoundry/ruby-buildpack-release
+- name: staticfile-buildpack-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/staticfile-buildpack-release
+- name: semver-version
+  type: semver-iam
+  source:
+    driver: s3
+    bucket: {{semver-bucket}}
+    key: {{semver-key}}
+    region_name: {{semver-bucket-region}}
+    initial_version: 0.0.1
+
+resource_types:
+- name: semver-iam
+  type: docker-image
+  source:
+    repository: governmentpaas/semver-resource
 
 jobs:
 - name: deploy-docker-registry
-  serial: true
   plan:
   - get: cf-buildpack-image-src
   - get: registry-image
     trigger: true
   - task: deploy-registry
     file: cf-buildpack-image-src/ci/deploy-registry.yml
-    params:
+    params: &cfparams
       CF_API: {{cf_api}}
       CF_USER: {{cf_username}}
       CF_PASS: {{cf_password}}
       CF_ORG: {{cf_org}}
       CF_SPACE: {{cf_space}}
       APP_NAME: {{registry_app_name}}
-  - put: registry-auth-s3
-    params:
-      file: build/registry-service-auth
-
-- name: update-python-image
-  serial: true
+  - put: semver-version
+    params: {bump: patch}
+- name: update-binary-image
   plan:
+  - get: semver-version
+    passed: [deploy-docker-registry]
   - get: cf-buildpack-image-src
     trigger: true
+  - get: binary-buildpack-release
+    trigger: true
+  - get: cflinuxfs2-release
+    trigger: true
+  - task: do-build-args
+    privileged: true
+    file: cf-buildpack-image-src/ci/do-build-args.yml
+    params:
+      <<: *cfparams
+      LANGUAGE: binary
+- name: update-go-image
+  plan:
+  - get: semver-version
     passed: [deploy-docker-registry]
+  - get: cf-buildpack-image-src
+    trigger: true
+  - get: go-buildpack-release
+    trigger: true
+  - get: cflinuxfs2-release
+    trigger: true
+  - task: do-build-args
+    privileged: true
+    file: cf-buildpack-image-src/ci/do-build-args.yml
+    params:
+      <<: *cfparams
+      LANGUAGE: go
+- name: update-java-image
+  plan:
+  - get: semver-version
+    passed: [deploy-docker-registry]
+  - get: cf-buildpack-image-src
+    trigger: true
+  - get: java-buildpack-release
+    trigger: true
+  - get: cflinuxfs2-release
+    trigger: true
+  - task: do-build-args
+    privileged: true
+    file: cf-buildpack-image-src/ci/do-build-args.yml
+    params:
+      <<: *cfparams
+      LANGUAGE: java
+- name: update-nodejs-image
+  plan:
+  - get: semver-version
+    passed: [deploy-docker-registry]
+  - get: cf-buildpack-image-src
+    trigger: true
+  - get: nodejs-buildpack-release
+    trigger: true
+  - get: cflinuxfs2-release
+    trigger: true
+  - task: do-build-args
+    privileged: true
+    file: cf-buildpack-image-src/ci/do-build-args.yml
+    params:
+      <<: *cfparams
+      LANGUAGE: nodejs
+- name: update-dotnet-core-image
+  plan:
+  - get: semver-version
+    passed: [deploy-docker-registry]
+  - get: cf-buildpack-image-src
+    trigger: true
+  - get: dotnet-core-buildpack-release
+    trigger: true
+  - get: cflinuxfs2-release
+    trigger: true
+  - task: do-build-args
+    privileged: true
+    file: cf-buildpack-image-src/ci/do-build-args.yml
+    params:
+      <<: *cfparams
+      LANGUAGE: dotnet-core
+- name: update-php-image
+  plan:
+  - get: semver-version
+    passed: [deploy-docker-registry]
+  - get: cf-buildpack-image-src
+    trigger: true
+  - get: php-buildpack-release
+    trigger: true
+  - get: cflinuxfs2-release
+    trigger: true
+  - task: do-build-args
+    privileged: true
+    file: cf-buildpack-image-src/ci/do-build-args.yml
+    params:
+      <<: *cfparams
+      LANGUAGE: php
+- name: update-python-image
+  plan:
+  - get: semver-version
+    passed: [deploy-docker-registry]
+  - get: cf-buildpack-image-src
+    trigger: true
   - get: python-buildpack-release
     trigger: true
   - get: cflinuxfs2-release
     trigger: true
-  - get: registry-auth-s3
   - task: do-build-args
+    privileged: true
     file: cf-buildpack-image-src/ci/do-build-args.yml
     params:
+      <<: *cfparams
       LANGUAGE: python
+- name: update-ruby-image
+  plan:
+  - get: semver-version
+    passed: [deploy-docker-registry]
+  - get: cf-buildpack-image-src
+    trigger: true
+  - get: ruby-buildpack-release
+    trigger: true
+  - get: cflinuxfs2-release
+    trigger: true
+  - task: do-build-args
+    privileged: true
+    file: cf-buildpack-image-src/ci/do-build-args.yml
+    params:
+      <<: *cfparams
+      LANGUAGE: ruby
+- name: update-staticfile-image
+  plan:
+  - get: semver-version
+    passed: [deploy-docker-registry]
+  - get: cf-buildpack-image-src
+    trigger: true
+  - get: staticfile-buildpack-release
+    trigger: true
+  - get: cflinuxfs2-release
+    trigger: true
+  - task: do-build-args
+    privileged: true
+    file: cf-buildpack-image-src/ci/do-build-args.yml
+    params:
+      <<: *cfparams
+      LANGUAGE: staticfile
