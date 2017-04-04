@@ -13,7 +13,7 @@ curl -L "https://cli.run.pivotal.io/stable?release=linux64-binary&source=github"
 apt-get update -qq && apt-get install -qqy jq
 
 # start up docker
-PORT=2375
+export PORT=2375
 /usr/local/bin/wrapdocker
 
 BP_VERSION=$(curl -s -L http://bosh.io/api/v1/releases/github.com/cloudfoundry/${LANGUAGE}-buildpack-release -H "Content-type: application/json" -H "Accept: application/json" | jq -r '.[0] | .version')
