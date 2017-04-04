@@ -7,8 +7,6 @@ image_resource:
 
 inputs:
 - name: cf-buildpack-image-src
-outputs:
-- name: build
 run:
   path: cf-buildpack-image-src/ci/deploy-registry.sh
 
