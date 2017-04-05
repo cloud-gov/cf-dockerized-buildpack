@@ -1,27 +1,22 @@
+# CloudFoundry Buildpack as Docker image
 This is an experiment to create a Docker container that approximates
 the runtime environment of a cloud.gov/CloudFoundry droplet on the
 [cflinuxfs2][] stack.
 
 The Dockerfile is heavily inspired by [sclevine/cflocal][].
 
-## Quick start
-Make sure you have [jq][] installed to run the build script.
+## Using in your application
 
-To build an image for a particular buildpack, you provide the language
-as a argument to the build script. For example, to build an image for `python`:
+### Dockerfile and docker-compose.yml
+To use the image in your application, you will create a `Dockerfile`. This `Dockerfile` is used to build your final container image with the correct language, or buildpack, that your application is using.
 
-```shell
-./build.sh python
-```
+Valid buildpacks at this time are one of:
+**binary | go | java | nodejs | dotnet-core | php | python | ruby | staticfile**
 
-This will build a base image that can be used by your own application
-to replicate the build lifecycle when pushing an application.
-
-### Using in your application
-To use the image in your application, you will create a `Dockerfile`. This `Dockerfile` is used to build your final container image with the correct language, or buildpack, that your application is using.  So for a python project, your `Dockerfile` will look like:
+So for a `python` project, your `Dockerfile` will look like:
 
 ```Dockerfile
-FROM cloud-gov/python
+FROM cloud-gov-registry.app.cloud.gov/python-buildpack
 ```
 
 You then will add a `docker-compose.yml`. This file exposes the proper port
@@ -39,7 +34,7 @@ services:
     build:
       context: .
 ```
-
+### Starting the app
 Once you have both your `Dockerfile` and `docker-compose.yml`, you can then
 run the app:
 
@@ -49,7 +44,7 @@ docker-compose up --build
 
 As your container builds, it goes through the [buildpackapplifecycle][] to properly build and launch your application.
 
-#### Deploying changes
+### Deploying changes
 When you make changes to your app, you simply stop the container, and bring it back up again.
 
 ```shell
@@ -57,7 +52,42 @@ docker-compose down
 docker-compose up
 ```
 
-If you make changes to your required dependencies (through requirements.txt, package.json, Gemfile, etc) then you will need to force another build of the container with `docker-compose up --build`.
+If you make changes to your required dependencies (through `requirements.txt`, `package.json`, `Gemfile`, etc) then you will need to force another build of the container with `docker-compose up --build`.
+
+## Creating the base images
+
+### Building images locally
+Make sure you have [jq][] installed to run the build script.
+
+To build an image for a particular buildpack, you provide the language
+as a argument to the build script. For example, to build an image for `python`:
+
+```shell
+./build.sh python
+```
+
+This will build a base image that can be used by your own application
+to replicate the build lifecycle when pushing an application.
+
+### Using the automated pipeline
+The pipeline will publish each buildpack image to a repository hosted on [cloud.gov][]
+
+**NOTE** This requires using [concourse.ci][] using AWS instance profiles that allows Concourse to publish to an S3 bucket, a deployment of [CloudFoundry][], and an instance of the [credentials broker][]
+
+* Copy `credentials.example.yml` to `credentials.yml` and start filling in with the appropriate information.
+
+* Create a deployer user in the org and space you want the registry to live:
+```shell
+cf create-service cloud-gov-service-account space-deployer registry-deployer
+cf service registry-deployer
+```
+
+* Visit the given Dashboard URL to get the account credentials. Update the `credentials.yml`
+
+* Fly the pipeline
+```shell
+fly -t <TARGET> set-pipeline -p dockerized-buildpacks -c pipeline.yml -l credentials.yml
+```
 
 ## Other references
 
@@ -71,3 +101,7 @@ If you make changes to your required dependencies (through requirements.txt, pac
 [buildpackapplifecycle]: https://github.com/cloudfoundry/buildpackapplifecycle
 [cfdocs]: https://docs.cloudfoundry.org/buildpacks/custom.html
 [buildpacks]: https://docs.cloudfoundry.org/buildpacks/#system-buildpacks
+[concourse.ci]: https://concourse.ci
+[cloud.gov]: https://cloud.gov
+[CloudFoundry]: https://github.com/cloudfoundry/cf-release
+[credentials broker]: https://github.com/cloudfoundry-community/uaa-credentials-broker
