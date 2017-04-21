@@ -1,0 +1,15 @@
+{
+  "name": "nodejs-example",
+  "version": "0.0.1",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
+  },
+  "author": "",
+  "license": "SEE LICENSE IN LICENSE.MD",
+  "dependencies": {
+    "express": "^4.15.2"
+  },
+  "description": ""
+}
