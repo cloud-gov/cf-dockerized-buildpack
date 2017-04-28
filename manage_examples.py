@@ -35,14 +35,22 @@ class ExampleApp(object):
         self.path = os.path.join(EXAMPLES_DIR, name)
 
     @classmethod
+    def get_all_names(cls):  # type: () -> List[str]
+        """
+        Gets the names of all available examples.
+        """
+
+        return [d for d in os.listdir(EXAMPLES_DIR)
+                if os.path.isdir(os.path.join(EXAMPLES_DIR, d))
+                and not d.startswith('.')]
+
+    @classmethod
     def get_all(cls):  # type: () -> List[ExampleApp]
         """
         Returns a list of all available examples.
         """
 
-        return [cls(d) for d in os.listdir(EXAMPLES_DIR)
-                if os.path.isdir(os.path.join(EXAMPLES_DIR, d))
-                and not d.startswith('.')]
+        return [cls(name) for name in cls.get_all_names()]
 
     @classmethod
     def from_cmdline_arg(cls, s):  # type (str) -> ExampleApp
@@ -53,11 +61,10 @@ class ExampleApp(object):
 
         example = [e for e in cls.get_all() if e.name == s]
         if not example:
-            example_names = [e.name for e in cls.get_all()]
             raise argparse.ArgumentTypeError(
                 'invalid example, "{}" is not one of: {}'.format(
                     s,
-                    ', '.join(example_names)
+                    ', '.join(cls.get_all_names())
                 )
             )
         return example[0]
@@ -164,7 +171,11 @@ def add_example_arg(parser):  # type: (argparse.ArgumentParser) -> None
     """
 
     parser.add_argument(
-        'example', help='examples',
+        'example',
+        help=(
+            'One of: {}. '.format(', '.join(ExampleApp.get_all_names())) +
+            'If absent, defaults to all examples.'
+        ),
         nargs='*', default=ExampleApp.get_all(),
         type=ExampleApp.from_cmdline_arg
     )
