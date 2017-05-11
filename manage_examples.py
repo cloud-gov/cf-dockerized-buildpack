@@ -4,6 +4,7 @@ import subprocess
 import re
 import time
 import urllib2
+import httplib
 import urlparse
 import argparse
 
@@ -20,10 +21,11 @@ PORT = 8080
 INDEX_RE = re.compile('hello world', flags=re.IGNORECASE)
 
 # Maximum numer of times we'll try to ping the example's homepage.
-MAX_ATTEMPTS = 5
+MAX_ATTEMPTS = 10
 
 # Seconds between each homepage ping attempt.
-SECONDS_BTWN_ATTEMPTS = 1
+SECONDS_BTWN_ATTEMPTS = 5
+
 
 class ExampleApp(object):
     """
@@ -104,7 +106,8 @@ class ExampleApp(object):
                     ))
         finally:
             print("shutting down {}...".format(name))
-            popen.kill()
+            popen.terminate()
+            self.cleanup()
 
 
 def get_server_url():  # type: () -> str
@@ -122,7 +125,7 @@ def get_server_url():  # type: () -> str
 
 def is_server_working():  # type: () -> bool
     """
-    Attempts to ping the 
+    Attempts to ping the
     """
 
     url = get_server_url()
@@ -131,6 +134,8 @@ def is_server_working():  # type: () -> bool
         f = urllib2.urlopen(url)
         return bool(INDEX_RE.search(f.read()))
     except urllib2.URLError:
+        return False
+    except httplib.BadStatusLine:
         return False
 
 

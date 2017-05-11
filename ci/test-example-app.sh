@@ -18,6 +18,4 @@ sleep 5
 cd "$SCRIPTPATH/.." || exit
 python manage_examples.py test "$LANGUAGE"
 
-docker stop $(docker ps -q)
-
 kill -9 $(cat /var/run/docker.pid)
