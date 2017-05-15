@@ -3,7 +3,10 @@
 set -e
 set -u
 
-SCRIPTPATH=$( cd $(dirname $0) ; pwd -P )
+SCRIPTPATH=$( cd "$(dirname "$0")" ; pwd -P )
+
+# shellcheck disable=SC1091
+. /opt/resource/common.sh
 
 # install cf cli
 mkdir -p tmp
@@ -14,14 +17,16 @@ apt-get update -qq && apt-get install -qqy jq
 
 # start up docker
 export PORT=2375
-/usr/local/bin/wrapdocker &
+# /usr/local/bin/wrapdocker &
+start_docker
 # give docker a chance to start up
-sleep 5
+# sleep 5
 
-BP_VERSION=$(curl -s -L http://bosh.io/api/v1/releases/github.com/cloudfoundry/${LANGUAGE}-buildpack-release -H "Content-type: application/json" -H "Accept: application/json" | jq -r '.[0] | .version')
+BP_VERSION=$(curl -s -L "http://bosh.io/api/v1/releases/github.com/cloudfoundry/${LANGUAGE}-buildpack-release" -H "Content-type: application/json" -H "Accept: application/json" | jq -r '.[0] | .version')
 (cd "${SCRIPTPATH}"/../ && ./build.sh "${LANGUAGE}")
 
 cf login -a "$CF_API" -u "$CF_USER" -p "$CF_PASS" -o "$CF_ORG" -s "$CF_SPACE"
+# shellcheck disable=SC1090
 . "${SCRIPTPATH}"/export-service-keys.sh
 
 docker run -d \
@@ -39,6 +44,6 @@ docker tag "${LANGUAGE}-buildpack:latest" localhost:5000/"${LANGUAGE}-buildpack:
 
 docker push localhost:5000/"${LANGUAGE}-buildpack"
 
-docker stop $(docker ps -q)
+docker stop "$(docker ps -q)"
 
-kill -9 $(cat /var/run/docker.pid)
+#kill -9 $(cat /var/run/docker.pid)
