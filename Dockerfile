@@ -26,6 +26,7 @@ ENV \
   CF_INSTANCE_GUID=999db41a-508b-46eb-74d8-6f9c06c006da \
   INSTANCE_GUID=999db41a-508b-46eb-74d8-6f9c06c006da \
   INSTANCE_INDEX=0 \
+  LANG=en_US.UTF-8 \
   PORT=8080 \
   HOME=/home/vcap/app \
   TMPDIR=/home/vcap/tmp \
