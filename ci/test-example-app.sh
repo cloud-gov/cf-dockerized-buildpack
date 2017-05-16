@@ -14,10 +14,7 @@ chmod +x /usr/local/bin/docker-compose
 
 # start up docker
 export PORT=2375
-# /usr/local/bin/wrapdocker &
 start_docker
-# give docker a chance to start up
-# sleep 5
 
 cd "$SCRIPTPATH/.." || exit
 python manage_examples.py test "$LANGUAGE"
