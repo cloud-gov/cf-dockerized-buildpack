@@ -8,19 +8,22 @@ SCRIPTPATH=$( cd "$(dirname "$0")" ; pwd -P )
 # shellcheck disable=SC1091
 . /opt/resource/common.sh
 
+# wget static compiled CURL
+wget -O curl.tar.gz http://s3-us-gov-west-1.amazonaws.com/cg-public/curl.tar.gz
+tar zxvf curl.tar.gz
+mv curl /usr/local/bin
+mkdir -p /usr/share/ssl/certs
+rm -rf /usr/share/ssl/certs/ca-bundle.crt
+cat /usr/share/ca-certificates/mozilla/* >> /usr/share/ssl/certs/ca-bundle.crt
+
 # install cf cli
 mkdir -p tmp
 PATH=$PWD/tmp:$PATH
-curl -# -L "https://cli.run.pivotal.io/stable?release=linux64-binary&source=github" | tar -zx -C tmp
-# get jq
-apt-get update -qq && apt-get install -qqy jq
+curl -k -# -L "https://cli.run.pivotal.io/stable?release=linux64-binary&source=github" | tar -zx -C tmp
 
 # start up docker
 export PORT=2375
-# /usr/local/bin/wrapdocker &
-start_docker
-# give docker a chance to start up
-# sleep 5
+start_docker "" ""
 
 BP_VERSION=$(curl -s -L "http://bosh.io/api/v1/releases/github.com/cloudfoundry/${LANGUAGE}-buildpack-release" -H "Content-type: application/json" -H "Accept: application/json" | jq -r '.[0] | .version')
 (cd "${SCRIPTPATH}"/../ && ./build.sh "${LANGUAGE}")
@@ -45,5 +48,3 @@ docker tag "${LANGUAGE}-buildpack:latest" localhost:5000/"${LANGUAGE}-buildpack:
 docker push localhost:5000/"${LANGUAGE}-buildpack"
 
 docker stop "$(docker ps -q)"
-
-#kill -9 $(cat /var/run/docker.pid)
