@@ -7,6 +7,7 @@ image_resource:
 
 inputs:
 - name: cf-buildpack-image-src
+- name: docker-compose-image
 run:
   path: cf-buildpack-image-src/ci/test-example-app.sh
 

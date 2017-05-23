@@ -7,6 +7,8 @@ image_resource:
 
 inputs:
 - name: cf-buildpack-image-src
+- name: cflinuxfs2-image
+- name: registry-image
 run:
   path: cf-buildpack-image-src/ci/do-build-args.sh
 

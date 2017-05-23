@@ -4,15 +4,22 @@ resources:
   type: git
   source:
     uri: https://github.com/18F/cf-dockerized-buildpack.git
-    branch: examples 
-- name: cflinuxfs2-release
-  type: bosh-io-release
+    branch: examples
+- name: cflinuxfs2-image
+  type: docker-image
   source:
-    repository: cloudfoundry/cflinuxfs2-rootfs-release
+    repository: cloudfoundry/cflinuxfs2
+    tag: latest
 - name: registry-image
   type: docker-image
   source:
     repository: registry
+    tag: latest
+- name: docker-compose-image
+  type: docker-image
+  source:
+    repository: docker/compose
+    tag: 1.13.0
 - name: binary-buildpack-release
   type: bosh-io-release
   source:
@@ -85,12 +92,17 @@ jobs:
   plan:
   - get: semver-version
     passed: [deploy-docker-registry]
+  - get: registry-image
+    params: {save: true}
+  - get: docker-compose-image
+    params: {save: true}
   - get: cf-buildpack-image-src
     trigger: true
   - get: binary-buildpack-release
     trigger: true
-  - get: cflinuxfs2-release
+  - get: cflinuxfs2-image
     trigger: true
+    params: {save: true}
   - task: do-build-args
     privileged: true
     file: cf-buildpack-image-src/ci/do-build-args.yml
@@ -106,12 +118,17 @@ jobs:
   plan:
   - get: semver-version
     passed: [deploy-docker-registry]
+  - get: registry-image
+    params: {save: true}
+  - get: docker-compose-image
+    params: {save: true}
   - get: cf-buildpack-image-src
     trigger: true
   - get: go-buildpack-release
     trigger: true
-  - get: cflinuxfs2-release
+  - get: cflinuxfs2-image
     trigger: true
+    params: {save: true}
   - task: do-build-args
     privileged: true
     file: cf-buildpack-image-src/ci/do-build-args.yml
@@ -127,12 +144,17 @@ jobs:
   plan:
   - get: semver-version
     passed: [deploy-docker-registry]
+  - get: registry-image
+    params: {save: true}
+  - get: docker-compose-image
+    params: {save: true}
   - get: cf-buildpack-image-src
     trigger: true
   - get: java-buildpack-release
     trigger: true
-  - get: cflinuxfs2-release
+  - get: cflinuxfs2-image
     trigger: true
+    params: {save: true}
   - task: do-build-args
     privileged: true
     file: cf-buildpack-image-src/ci/do-build-args.yml
@@ -148,12 +170,17 @@ jobs:
   plan:
   - get: semver-version
     passed: [deploy-docker-registry]
+  - get: registry-image
+    params: {save: true}
+  - get: docker-compose-image
+    params: {save: true}
   - get: cf-buildpack-image-src
     trigger: true
   - get: nodejs-buildpack-release
     trigger: true
-  - get: cflinuxfs2-release
+  - get: cflinuxfs2-image
     trigger: true
+    params: {save: true}
   - task: do-build-args
     privileged: true
     file: cf-buildpack-image-src/ci/do-build-args.yml
@@ -169,12 +196,17 @@ jobs:
   plan:
   - get: semver-version
     passed: [deploy-docker-registry]
+  - get: registry-image
+    params: {save: true}
+  - get: docker-compose-image
+    params: {save: true}
   - get: cf-buildpack-image-src
     trigger: true
   - get: dotnet-core-buildpack-release
     trigger: true
-  - get: cflinuxfs2-release
+  - get: cflinuxfs2-image
     trigger: true
+    params: {save: true}
   - task: do-build-args
     privileged: true
     file: cf-buildpack-image-src/ci/do-build-args.yml
@@ -190,12 +222,17 @@ jobs:
   plan:
   - get: semver-version
     passed: [deploy-docker-registry]
+  - get: registry-image
+    params: {save: true}
+  - get: docker-compose-image
+    params: {save: true}
   - get: cf-buildpack-image-src
     trigger: true
   - get: php-buildpack-release
     trigger: true
-  - get: cflinuxfs2-release
+  - get: cflinuxfs2-image
     trigger: true
+    params: {save: true}
   - task: do-build-args
     privileged: true
     file: cf-buildpack-image-src/ci/do-build-args.yml
@@ -211,12 +248,17 @@ jobs:
   plan:
   - get: semver-version
     passed: [deploy-docker-registry]
+  - get: registry-image
+    params: {save: true}
+  - get: docker-compose-image
+    params: {save: true}
   - get: cf-buildpack-image-src
     trigger: true
   - get: python-buildpack-release
     trigger: true
-  - get: cflinuxfs2-release
+  - get: cflinuxfs2-image
     trigger: true
+    params: {save: true}
   - task: do-build-args
     privileged: true
     file: cf-buildpack-image-src/ci/do-build-args.yml
@@ -232,12 +274,17 @@ jobs:
   plan:
   - get: semver-version
     passed: [deploy-docker-registry]
+  - get: registry-image
+    params: {save: true}
+  - get: docker-compose-image
+    params: {save: true}
   - get: cf-buildpack-image-src
     trigger: true
   - get: ruby-buildpack-release
     trigger: true
-  - get: cflinuxfs2-release
+  - get: cflinuxfs2-image
     trigger: true
+    params: {save: true}
   - task: do-build-args
     privileged: true
     file: cf-buildpack-image-src/ci/do-build-args.yml
@@ -253,12 +300,17 @@ jobs:
   plan:
   - get: semver-version
     passed: [deploy-docker-registry]
+  - get: registry-image
+    params: {save: true}
+  - get: docker-compose-image
+    params: {save: true}
   - get: cf-buildpack-image-src
     trigger: true
   - get: staticfile-buildpack-release
     trigger: true
-  - get: cflinuxfs2-release
+  - get: cflinuxfs2-image
     trigger: true
+    params: {save: true}
   - task: do-build-args
     privileged: true
     file: cf-buildpack-image-src/ci/do-build-args.yml

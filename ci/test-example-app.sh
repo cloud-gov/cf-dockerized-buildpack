@@ -24,6 +24,8 @@ chmod +x /usr/local/bin/docker-compose
 export PORT=2375
 start_docker "" ""
 
+docker load -i docker-compose-image/image
+
 cd "$SCRIPTPATH/../examples/$LANGUAGE" || exit
 docker-compose build
 ( docker-compose up & )

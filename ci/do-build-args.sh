@@ -25,6 +25,9 @@ curl -k -# -L "https://cli.run.pivotal.io/stable?release=linux64-binary&source=g
 export PORT=2375
 start_docker "" ""
 
+docker load -i cflinuxfs2-image/image
+docker load -i registry-image/image
+
 BP_VERSION=$(curl -s -L "http://bosh.io/api/v1/releases/github.com/cloudfoundry/${LANGUAGE}-buildpack-release" -H "Content-type: application/json" -H "Accept: application/json" | jq -r '.[0] | .version')
 (cd "${SCRIPTPATH}"/../ && ./build.sh "${LANGUAGE}")
 
