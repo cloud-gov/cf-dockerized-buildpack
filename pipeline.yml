@@ -15,11 +15,6 @@ resources:
   source:
     repository: registry
     tag: latest
-- name: docker-compose-image
-  type: docker-image
-  source:
-    repository: docker/compose
-    tag: 1.13.0
 - name: binary-buildpack-release
   type: bosh-io-release
   source:
@@ -94,8 +89,6 @@ jobs:
     passed: [deploy-docker-registry]
   - get: registry-image
     params: {save: true}
-  - get: docker-compose-image
-    params: {save: true}
   - get: cf-buildpack-image-src
     trigger: true
   - get: binary-buildpack-release
@@ -119,8 +112,6 @@ jobs:
   - get: semver-version
     passed: [deploy-docker-registry]
   - get: registry-image
-    params: {save: true}
-  - get: docker-compose-image
     params: {save: true}
   - get: cf-buildpack-image-src
     trigger: true
@@ -146,8 +137,6 @@ jobs:
     passed: [deploy-docker-registry]
   - get: registry-image
     params: {save: true}
-  - get: docker-compose-image
-    params: {save: true}
   - get: cf-buildpack-image-src
     trigger: true
   - get: java-buildpack-release
@@ -171,8 +160,6 @@ jobs:
   - get: semver-version
     passed: [deploy-docker-registry]
   - get: registry-image
-    params: {save: true}
-  - get: docker-compose-image
     params: {save: true}
   - get: cf-buildpack-image-src
     trigger: true
@@ -198,8 +185,6 @@ jobs:
     passed: [deploy-docker-registry]
   - get: registry-image
     params: {save: true}
-  - get: docker-compose-image
-    params: {save: true}
   - get: cf-buildpack-image-src
     trigger: true
   - get: dotnet-core-buildpack-release
@@ -223,8 +208,6 @@ jobs:
   - get: semver-version
     passed: [deploy-docker-registry]
   - get: registry-image
-    params: {save: true}
-  - get: docker-compose-image
     params: {save: true}
   - get: cf-buildpack-image-src
     trigger: true
@@ -250,8 +233,6 @@ jobs:
     passed: [deploy-docker-registry]
   - get: registry-image
     params: {save: true}
-  - get: docker-compose-image
-    params: {save: true}
   - get: cf-buildpack-image-src
     trigger: true
   - get: python-buildpack-release
@@ -276,8 +257,6 @@ jobs:
     passed: [deploy-docker-registry]
   - get: registry-image
     params: {save: true}
-  - get: docker-compose-image
-    params: {save: true}
   - get: cf-buildpack-image-src
     trigger: true
   - get: ruby-buildpack-release
@@ -301,8 +280,6 @@ jobs:
   - get: semver-version
     passed: [deploy-docker-registry]
   - get: registry-image
-    params: {save: true}
-  - get: docker-compose-image
     params: {save: true}
   - get: cf-buildpack-image-src
     trigger: true

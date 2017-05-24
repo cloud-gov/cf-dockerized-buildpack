@@ -5,16 +5,11 @@ set -u
 
 SCRIPTPATH=$( cd "$(dirname "$0")" ; pwd -P )
 
-# shellcheck disable=SC1091
-. /opt/resource/common.sh
+# install jq
+apk --update --no-cache add jq && rm -rf /var/cache/apk/*
 
-# wget static compiled CURL
-wget -O curl.tar.gz http://s3-us-gov-west-1.amazonaws.com/cg-public/curl.tar.gz
-tar zxvf curl.tar.gz
-mv curl /usr/local/bin
-mkdir -p /usr/share/ssl/certs
-rm -rf /usr/share/ssl/certs/ca-bundle.crt
-cat /usr/share/ca-certificates/mozilla/* >> /usr/share/ssl/certs/ca-bundle.crt
+# shellcheck disable=SC1091
+. /docker-lib.sh
 
 # install cf cli
 mkdir -p tmp
@@ -22,11 +17,12 @@ PATH=$PWD/tmp:$PATH
 curl -k -# -L "https://cli.run.pivotal.io/stable?release=linux64-binary&source=github" | tar -zx -C tmp
 
 # start up docker
-export PORT=2375
-start_docker "" ""
+start_docker "" "" ""
 
 docker load -i cflinuxfs2-image/image
+docker tag "$(cat cflinuxfs2-image/image-id)" "$(cat cflinuxfs2-image/repository):$(cat cflinuxfs2-image/tag)"
 docker load -i registry-image/image
+docker tag "$(cat registry-image/image-id)" "$(cat registry-image/repository):$(cat registry-image/tag)"
 
 BP_VERSION=$(curl -s -L "http://bosh.io/api/v1/releases/github.com/cloudfoundry/${LANGUAGE}-buildpack-release" -H "Content-type: application/json" -H "Accept: application/json" | jq -r '.[0] | .version')
 (cd "${SCRIPTPATH}"/../ && ./build.sh "${LANGUAGE}")
