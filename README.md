@@ -54,6 +54,54 @@ docker-compose up
 
 If you make changes to your required dependencies (through `requirements.txt`, `package.json`, `Gemfile`, etc) then you will need to force another build of the container with `docker-compose up --build`.
 
+### Replicating services
+To replicate CloudFoundry services, you will add a new service and update your app service in your `docker-compose.yml` to include a link to the service, and adding the proper `VCAP_SERVICES` environment variable structure.
+
+An example diff of what these additions might look like for replicating an AWS RDS service:
+```diff
+--- ./old/docker-compose.yml  2017-05-15 09:30:48.000000000 -0400
++++ ./new/docker-compose.yml  2017-05-31 16:32:39.000000000 -0400
+@@ -8,6 +8,36 @@
+       - node-modules:/home/vcap/app/node_modules
+     build:
+       context: .
++    environment:
++      VCAP_SERVICES: |-
++        {
++          "aws-rds": [
++            {
++              "name": "my-rds-instance",
++              "label": "aws-rds",
++              "plan": "docker",
++              "credentials": {
++                "db_name": "mydb",
++                "host": "postgres-docker",
++                "password": "mysecret",
++                "port": "5432",
++                "uri": "postgres://myuser:mysecret@postgres-docker:5432/mydb",
++                "username": "myuser"
++              }
++            }
++          ]
++        }
++    links:
++      - postgres-docker
++
++  postgres-docker:
++    image: library/postgres:9.6.3
++    ports:
++      - 5432:5432
++    environment:
++      POSTGRES_USER: myuser
++      POSTGRESS_PASSWORD: mysecret
++      POSTGRES_DB: mydb
+
+ volumes:
+   node-modules:
+```
+
+You can take a look at the [services example][] written in nodejs for better idea of how you might define and use services.
+
 ## Creating the base images
 
 ### Building images locally
@@ -95,6 +143,7 @@ fly -t <TARGET> set-pipeline -p dockerized-buildpacks -c pipeline.yml -l credent
 
 * [CloudFoundry system buildpacks][buildpacks]
 
+[services example]: https://github.com/18F/cf-dockerized-buildpack/tree/master/examples/services-example
 [jq]: https://stedolan.github.io/jq/
 [cflinuxfs2]: https://github.com/cloudfoundry/stacks/tree/master/cflinuxfs2
 [sclevine/cflocal]: https://github.com/sclevine/cflocal
