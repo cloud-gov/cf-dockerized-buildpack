@@ -1,0 +1,13 @@
+version: '2'
+services:
+  app:
+    ports:
+      - 8080:8080
+    volumes:
+      - .:/home/vcap/app
+      - node-modules:/home/vcap/app/node_modules
+    build:
+      context: .
+
+volumes:
+  node-modules:

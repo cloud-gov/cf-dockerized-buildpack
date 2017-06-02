@@ -1,0 +1,43 @@
+version: '2'
+services:
+  app:
+    ports:
+      - 8080:8080
+    volumes:
+      - .:/home/vcap/app
+      - node-modules:/home/vcap/app/node_modules
+    build:
+      context: .
+    environment:
+      VCAP_SERVICES: |-
+        {
+          "aws-rds": [
+            {
+              "name": "my-rds-instance",
+              "label": "aws-rds",
+              "plan": "docker",
+              "credentials": {
+                "db_name": "mydb",
+                "host": "postgres-docker",
+                "password": "mysecret",
+                "port": "5432",
+                "uri": "postgres://myuser:mysecret@postgres-docker:5432/mydb",
+                "username": "myuser"
+              }
+            }
+          ]
+        }
+    links:
+      - postgres-docker
+
+  postgres-docker:
+    image: library/postgres:9.6.3
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRESS_PASSWORD: mysecret
+      POSTGRES_DB: mydb
+
+volumes:
+  node-modules:

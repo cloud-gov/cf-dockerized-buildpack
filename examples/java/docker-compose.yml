@@ -1,0 +1,15 @@
+version: '2'
+services:
+  app:
+    environment:
+      - MEMORY_LIMIT=1024M
+    ports:
+      - 8080:8080
+    volumes:
+      - .:/home/vcap/app
+      - java-buildpack:/home/vcap/app/.java-buildpack
+    build:
+      context: .
+
+volumes:
+  java-buildpack:

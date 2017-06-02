@@ -1,0 +1,12 @@
+version: '2'
+services:
+  app:
+    ports:
+      - 8080:8080
+    volumes:
+      - .:/home/vcap/app
+      - bin:/home/vcap/app/bin
+    build:
+      context: .
+volumes:
+  bin:

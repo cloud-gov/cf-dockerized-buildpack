@@ -1,0 +1,22 @@
+{
+  "name": "nodejs-example",
+  "version": "0.0.1",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
+  },
+  "engines": {
+    "npm": "^5.0.0",
+    "node": "^6.10.0"
+  },
+  "author": "",
+  "license": "SEE LICENSE IN LICENSE.MD",
+  "dependencies": {
+    "body-parser": "^1.17.2",
+    "cfenv": "^1.0.4",
+    "express": "^4.15.2",
+    "pg": "^6.2.3"
+  },
+  "description": ""
+}

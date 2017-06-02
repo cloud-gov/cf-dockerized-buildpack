@@ -27,8 +27,8 @@ git submodule update --init --recursive \
   src/code.cloudfoundry.org/bytefmt \
   src/code.cloudfoundry.org/cacheddownloader \
   src/code.cloudfoundry.org/lager \
-  src/github.com/cloudfoundry-incubator/candiedyaml \
-  src/github.com/cloudfoundry/systemcerts
+  src/code.cloudfoundry.org/systemcerts \
+  src/github.com/cloudfoundry-incubator/candiedyaml
 
 go build -o /tmp/lifecycle/builder code.cloudfoundry.org/buildpackapplifecycle/builder
 go build -o /tmp/lifecycle/launcher code.cloudfoundry.org/buildpackapplifecycle/launcher

@@ -3,25 +3,32 @@
 set -e
 set -u
 
-SCRIPTPATH=$( cd $(dirname $0) ; pwd -P )
+SCRIPTPATH=$( cd "$(dirname "$0")" ; pwd -P )
+
+# install jq
+apk --update --no-cache add jq && rm -rf /var/cache/apk/*
+
+# shellcheck disable=SC1091
+. /docker-lib.sh
 
 # install cf cli
 mkdir -p tmp
 PATH=$PWD/tmp:$PATH
-curl -# -L "https://cli.run.pivotal.io/stable?release=linux64-binary&source=github" | tar -zx -C tmp
-# get jq
-apt-get update -qq && apt-get install -qqy jq
+curl -k -# -L "https://cli.run.pivotal.io/stable?release=linux64-binary&source=github" | tar -zx -C tmp
 
 # start up docker
-export PORT=2375
-/usr/local/bin/wrapdocker &
-# give docker a chance to start up
-sleep 5
+start_docker "" "" ""
 
-BP_VERSION=$(curl -s -L http://bosh.io/api/v1/releases/github.com/cloudfoundry/${LANGUAGE}-buildpack-release -H "Content-type: application/json" -H "Accept: application/json" | jq -r '.[0] | .version')
+docker load -i cflinuxfs2-image/image
+docker tag "$(cat cflinuxfs2-image/image-id)" "$(cat cflinuxfs2-image/repository):$(cat cflinuxfs2-image/tag)"
+docker load -i registry-image/image
+docker tag "$(cat registry-image/image-id)" "$(cat registry-image/repository):$(cat registry-image/tag)"
+
+BP_VERSION=$(curl -s -L "http://bosh.io/api/v1/releases/github.com/cloudfoundry/${LANGUAGE}-buildpack-release" -H "Content-type: application/json" -H "Accept: application/json" | jq -r '.[0] | .version')
 (cd "${SCRIPTPATH}"/../ && ./build.sh "${LANGUAGE}")
 
 cf login -a "$CF_API" -u "$CF_USER" -p "$CF_PASS" -o "$CF_ORG" -s "$CF_SPACE"
+# shellcheck disable=SC1090
 . "${SCRIPTPATH}"/export-service-keys.sh
 
 docker run -d \
@@ -39,6 +46,4 @@ docker tag "${LANGUAGE}-buildpack:latest" localhost:5000/"${LANGUAGE}-buildpack:
 
 docker push localhost:5000/"${LANGUAGE}-buildpack"
 
-docker stop $(docker ps -q)
-
-kill -9 $(cat /var/run/docker.pid)
+docker stop "$(docker ps -q)"
