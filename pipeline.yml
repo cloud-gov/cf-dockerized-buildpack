@@ -4,7 +4,7 @@ resources:
   type: git
   source:
     uri: https://github.com/18F/cf-dockerized-buildpack.git
-    branch: examples
+    branch: master
 - name: cflinuxfs2-image
   type: docker-image
   source:
