@@ -39,6 +39,13 @@ Once you have both your `Dockerfile` and `docker-compose.yml`, you can then
 run the app:
 
 ```shell
+docker-compose build
+docker-compose up
+```
+
+Or you can use the shortcut:
+
+```shell
 docker-compose up --build
 ```
 
@@ -52,7 +59,11 @@ docker-compose down
 docker-compose up
 ```
 
-If you make changes to your required dependencies (through `requirements.txt`, `package.json`, `Gemfile`, etc) then you will need to force another build of the container with `docker-compose up --build`.
+If you make changes to your required dependencies (through `requirements.txt`, `package.json`, `Gemfile`, etc) then you will need to remove and force another build of the container:
+```shell
+docker-compose rm -fv
+docker-compose up --build
+```
 
 ### Replicating services
 To replicate CloudFoundry services, you will add a new service and update your app service in your `docker-compose.yml` to include a link to the service, and adding the proper `VCAP_SERVICES` environment variable structure.
