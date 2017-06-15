@@ -6,14 +6,11 @@ SCRIPTPATH=$( cd "$(dirname "$0")" ; pwd -P )
 MAX_ATTEMPTS=10
 INTERVAL_SECONDS=6
 
-# install jq
-apk --update --no-cache add jq && rm -rf /var/cache/apk/*
-
 # shellcheck disable=SC1091
 . /docker-lib.sh
 
 # start up docker
-start_docker "" "" ""
+start_docker "" ""
 
 cd "$SCRIPTPATH/../examples/$LANGUAGE" || exit
 docker-compose build

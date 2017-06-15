@@ -5,9 +5,6 @@ set -u
 
 SCRIPTPATH=$( cd "$(dirname "$0")" ; pwd -P )
 
-# install jq
-apk --update --no-cache add jq && rm -rf /var/cache/apk/*
-
 # shellcheck disable=SC1091
 . /docker-lib.sh
 
@@ -17,7 +14,7 @@ PATH=$PWD/tmp:$PATH
 curl -k -# -L "https://cli.run.pivotal.io/stable?release=linux64-binary&source=github" | tar -zx -C tmp
 
 # start up docker
-start_docker "" "" ""
+start_docker "" ""
 
 docker load -i cflinuxfs2-image/image
 docker tag "$(cat cflinuxfs2-image/image-id)" "$(cat cflinuxfs2-image/repository):$(cat cflinuxfs2-image/tag)"
