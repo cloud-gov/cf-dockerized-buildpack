@@ -34,6 +34,10 @@ services:
     build:
       context: .
 ```
+
+### Ignoring files
+When you push your application to CloudFoundry, there are often times when you want to ignore certain files from that push operation. Examples might include files in `node_modules`, python virtual environment dependencies, and more. To ignore these files, you typically create a `.cfignore`, much like a `.gitignore`, and lots of times, they can be sym-linked so you can keep track of these files in one place. If this applies to your project, you will also want to create a `.dockerignore` so that these files are not making their way into your container.
+
 ### Starting the app
 Once you have both your `Dockerfile` and `docker-compose.yml`, you can then
 run the app:
