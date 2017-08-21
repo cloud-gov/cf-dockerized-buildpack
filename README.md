@@ -94,7 +94,7 @@ An example diff of what these additions might look like for replicating an AWS R
 +  postgres-docker:
 +    image: library/postgres:9.6.3
 +    ports:
-+      - 5432:5432
++      - 5433:5432
 +    environment:
 +      POSTGRES_USER: myuser
 +      POSTGRESS_PASSWORD: mysecret
@@ -103,6 +103,8 @@ An example diff of what these additions might look like for replicating an AWS R
  volumes:
    node-modules:
 ```
+
+**NOTE:** When defining the services in `VCAP_SERVICES`, you'll want to always use the internal port of the service, not the exposed port. So, in the case above, we've exposed `postgres-docker` on port `5433` to our host system, but the service gets exposed to our application directly on the internal port of `5432` so that's what we use in our `VCAP_SERVICES` block.
 
 You can take a look at the [services example][] written in nodejs for better idea of how you might define and use services.
 
