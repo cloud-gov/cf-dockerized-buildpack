@@ -1,0 +1,17 @@
+version: 2
+jobs:
+  deploy-registry:
+    docker:
+      - image: governmentpaas/cf-cli
+
+    working_directory: /tmp/build
+
+    steps:
+      - checkout
+      - run: ./ci/deploy-registry.sh
+
+workflows:
+  version: 2
+  pipeline:
+    jobs:
+      - deploy-registry
