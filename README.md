@@ -1,3 +1,6 @@
+**Deprecated**
+There have been numerous innovations in the CloudFoundry and container spaces since this experiment was conducted. Alternatives include [sclevine/cflocal][] and [tonistiigi/buildkit-pack][]
+
 # CloudFoundry Buildpack as Docker image
 This is an experiment to create a Docker container that approximates
 the runtime environment of a cloud.gov/CloudFoundry droplet on the
@@ -158,6 +161,7 @@ fly -t <TARGET> set-pipeline -p dockerized-buildpacks -c pipeline.yml -l credent
 [jq]: https://stedolan.github.io/jq/
 [cflinuxfs2]: https://github.com/cloudfoundry/stacks/tree/master/cflinuxfs2
 [sclevine/cflocal]: https://github.com/sclevine/cflocal
+[tonistiigi/buildkit-pack]: https://github.com/tonistiigi/buildkit-pack
 [buildpackapplifecycle]: https://github.com/cloudfoundry/buildpackapplifecycle
 [cfdocs]: https://docs.cloudfoundry.org/buildpacks/custom.html
 [buildpacks]: https://docs.cloudfoundry.org/buildpacks/#system-buildpacks
